@@ -18,6 +18,7 @@ import net.corda.core.messaging.vaultQueryBy
 import net.corda.core.utilities.OpaqueBytes
 import net.corda.finance.USD
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.contracts.getCashBalance
 import net.corda.finance.flows.CashIssueFlow
 import net.corda.finance.flows.CashPaymentFlow
 import java.util.concurrent.Executors
@@ -43,35 +44,42 @@ private class ExampleClientRPC {
         val nodeAddress = NetworkHostAndPort.parse(args[0])
         val client = CordaRPCClient(nodeAddress)
         val proxy = mutableListOf<CordaRPCOps>()
-        val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
+        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
 
 
         //So luong lenh
         val txCount = 999
 
         //So luong RPC connections
-        val rpc = 63
+        val rpc = 15
         // Khoi tao ket noi RPC
 
-        for (i in 0 .. rpc) {
+        for (i in 0..rpc) {
             proxy.add(i, client.start("corda", "not_blockchain").proxy)
             println("RPC Connected...$i")
         }
 
-        val executor = Executors.newFixedThreadPool(128)
+        val executor = Executors.newFixedThreadPool(64)
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
+        val notary = proxy.first().notaryIdentities().first()
 
         //Getbalance
-        val vault = proxy.first().vaultQueryBy<Cash.State>().states
-        var ownedQuantity = vault.fold(0L) { sum, state ->
-            sum + state.state.data.amount.quantity
+//        val vault = proxy.first().vaultQueryBy<Cash.State>().states
+//        var ownedQuantity = vault.fold(0L) { sum, state ->
+//            sum + state.state.data.amount.quantity
+//        }
+        val forLoopMillisElapsed1 = measureTimeMillis {
+            for (i in 0..999) {
+                cashIssue(proxy.first(), notary, i)
+            }
         }
-        println("Sum Total: $ownedQuantity")
+        println("forLoopMillisElapsed: $forLoopMillisElapsed1")
+        println("Sum Total: ${proxy.first().getCashBalance(USD)}")
 
 
-        val forLoopMillisElapsed = measureTimeMillis {
+        val forLoopMillisElapsed2 = measureTimeMillis {
             var p = 0
-            for (i in 0 .. 999) {
+            for (i in 0..999) {
                 //val notary = proxy.notaryIdentities().first()
                 val worker = Runnable {
                     if (otherParty != null) {
@@ -83,9 +91,9 @@ private class ExampleClientRPC {
             }
             executor.shutdown()
             while (!executor.isTerminated) {
+            }
         }
-        }
-        println("forLoopMillisElapsed: $forLoopMillisElapsed")
+        println("forLoopMillisElapsed: $forLoopMillisElapsed2")
         println("Finished all threads")
     }
 
@@ -95,5 +103,9 @@ private class ExampleClientRPC {
         println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
     }
 
+    fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {
+        val issueRef = OpaqueBytes.of(0)
+        println("$i..." + proxy.startFlow(::CashIssueFlow, Amount(10, USD), issueRef, notary).returnValue.getOrThrow().toString())
+    }
 
 }

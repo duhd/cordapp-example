@@ -121,5 +121,5 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
 task runExampleClientRPCKotlin(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.example.client.ExampleClientRPCKt'
-    args '103.126.156.18:10003'
+    args '103.126.156.13:10003'
 }

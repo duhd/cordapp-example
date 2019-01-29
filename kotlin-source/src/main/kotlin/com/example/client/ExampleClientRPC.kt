@@ -43,7 +43,7 @@ private class ExampleClientRPC {
         val nodeAddress = NetworkHostAndPort.parse(args[0])
         val client = CordaRPCClient(nodeAddress)
         val proxy = mutableListOf<CordaRPCOps>()
-        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
+        val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
 
 
         //So luong lenh

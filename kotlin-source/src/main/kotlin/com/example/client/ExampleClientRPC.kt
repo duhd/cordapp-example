@@ -90,9 +90,9 @@ private class ExampleClientRPC {
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
-        //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
+        println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
         //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
-        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
+        //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
     }
 
 

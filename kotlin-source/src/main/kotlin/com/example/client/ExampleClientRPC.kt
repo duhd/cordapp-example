@@ -47,7 +47,7 @@ private class ExampleClientRPC {
 
 
         //So luong lenh
-        val txCount = 1000
+        val txCount = 999
 
         //So luong RPC connections
         val rpc = 127
@@ -59,10 +59,10 @@ private class ExampleClientRPC {
         }
 
         val executor = Executors.newFixedThreadPool(500)
-        val otherParty = proxy[1].wellKnownPartyFromX500Name(counterPartyName)
+        val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
 
         //Getbalance
-        val vault = proxy[1].vaultQueryBy<Cash.State>().states
+        val vault = proxy.first().vaultQueryBy<Cash.State>().states
         var ownedQuantity = vault.fold(0L) { sum, state ->
             sum + state.state.data.amount.quantity
         }
@@ -71,7 +71,7 @@ private class ExampleClientRPC {
 
         val forLoopMillisElapsed = measureTimeMillis {
             var p = 0
-            for (i in 0 .. 1000) {
+            for (i in 0 .. 999) {
                 //val notary = proxy.notaryIdentities().first()
                 val worker = Runnable {
                     if (otherParty != null) {
@@ -90,9 +90,9 @@ private class ExampleClientRPC {
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
-        println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
+        //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
         //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
-        //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
+        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
     }
 
 

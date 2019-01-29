@@ -1,6 +1,6 @@
 buildscript {
     ext.corda_release_group = 'com.r3.corda'
-    ext.corda_release_version = '3.1'
+    ext.corda_release_version = '3.2'
     ext.corda_gradle_plugins_version = '4.0.25'
     ext.kotlin_version = '1.2.50'
     ext.junit_version = '4.12'
@@ -40,5 +40,9 @@ allprojects {
         // maven {
         //     url 'file://D:/path/to/local/directory'
         // }
+        maven {
+            url 'file://E:/Users/Hoang Dinh Du/OneDrive/CordaCode/corda-enterprise/repository'
+        }
+        
     }
 }

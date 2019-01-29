@@ -50,7 +50,7 @@ private class ExampleClientRPC {
         val txCount = 1000
 
         //So luong RPC connections
-        val rpc = 31
+        val rpc = 127
         // Khoi tao ket noi RPC
 
         for (i in 0 .. rpc) {
@@ -58,7 +58,7 @@ private class ExampleClientRPC {
             println("RPC Connected...$i")
         }
 
-        val executor = Executors.newFixedThreadPool(32)
+        val executor = Executors.newFixedThreadPool(500)
         val otherParty = proxy[1].wellKnownPartyFromX500Name(counterPartyName)
 
         //Getbalance

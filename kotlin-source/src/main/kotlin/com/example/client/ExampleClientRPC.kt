@@ -55,26 +55,24 @@ private class ExampleClientRPC {
 
         val forLoopMillisElapsed2 = measureTimeMillis {
             for (i in 0..999) {
-                val worker = Runnable {
+
                     if (otherParty != null) {
                         generateTransactions(proxy, otherParty, i)
                         //cashIssue(proxy,notary,i)
                     }
-                }
-                executor.execute(worker)
+
                }
-            executor.shutdown()
-            while (!executor.isTerminated) {
-            }
+
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
+        println("Sum Total: ${proxy.getCashBalance(USD)}")
         println("Finished all threads")
         conn.notifyServerAndClose()
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
         //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).returnValue.getOrThrow().toString())
-        proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty)
+        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
     }
 
     fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {

@@ -43,69 +43,72 @@ private class ExampleClientRPC {
         require(args.size == 1) { "Usage: ExampleClientRPC <node address>" }
         val nodeAddress = NetworkHostAndPort.parse(args[0])
         val client = CordaRPCClient(nodeAddress)
-        val proxy = mutableListOf<CordaRPCOps>()
-        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
+        val conn = client.start("corda", "not_blockchain")
+        val proxy: CordaRPCOps = conn.proxy
+
+
+
+        logger.info(proxy.currentNodeTime().toString())
+
 
 
         //So luong lenh
         val txCount = 999
 
         //So luong RPC connections
-        val rpc = 15
-        // Khoi tao ket noi RPC
+        val rpc = 0
 
-        for (i in 0..rpc) {
-            proxy.add(i, client.start("corda", "not_blockchain").proxy)
-            println("RPC Connected...$i")
-        }
+        val executor = Executors.newFixedThreadPool(256)
+        val executor1 = Executors.newFixedThreadPool(500)
+        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
+        val otherParty = proxy.wellKnownPartyFromX500Name(counterPartyName)
+        val notary = proxy.notaryIdentities().first()
 
-        val executor = Executors.newFixedThreadPool(64)
-        val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
-        val notary = proxy.first().notaryIdentities().first()
 
-        //Getbalance
-//        val vault = proxy.first().vaultQueryBy<Cash.State>().states
-//        var ownedQuantity = vault.fold(0L) { sum, state ->
-//            sum + state.state.data.amount.quantity
+//        val forLoopMillisElapsed1 = measureTimeMillis {
+//            for (i in 0..999) {
+//                val worker = Runnable {
+//                    if (otherParty != null) {
+//                        cashIssue(proxy, notary, i)
+//                    }
+//                }
+//                executor1.execute(worker)
+//            }
+//            while (!executor1.isTerminated) {
+//            }
 //        }
-        val forLoopMillisElapsed1 = measureTimeMillis {
-            for (i in 0..999) {
-                cashIssue(proxy.first(), notary, i)
-            }
-        }
-        println("forLoopMillisElapsed: $forLoopMillisElapsed1")
-        println("Sum Total: ${proxy.first().getCashBalance(USD)}")
+//
+//        println("forLoopMillisElapsed: $forLoopMillisElapsed1")
+        println("Sum Total: ${proxy.getCashBalance(USD)}")
 
 
         val forLoopMillisElapsed2 = measureTimeMillis {
-            var p = 0
             for (i in 0..999) {
-                //val notary = proxy.notaryIdentities().first()
                 val worker = Runnable {
                     if (otherParty != null) {
-                        generateTransactions(proxy[p], otherParty, i)
+                        generateTransactions(proxy, otherParty, i)
                     }
                 }
                 executor.execute(worker)
-                if (p < rpc) p.plus(1) else p = 0
-            }
+               }
             executor.shutdown()
             while (!executor.isTerminated) {
             }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
         println("Finished all threads")
+        conn.notifyServerAndClose()
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
         //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
         //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
-        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(1, USD), otherParty).returnValue.getOrThrow().toString())
+        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).returnValue.getOrThrow().toString())
     }
 
     fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {
         val issueRef = OpaqueBytes.of(0)
-        println("$i..." + proxy.startFlow(::CashIssueFlow, Amount(10, USD), issueRef, notary).returnValue.getOrThrow().toString())
+        println("$i..." + proxy.startFlow(::CashIssueFlow, Amount(100, USD), issueRef, notary).returnValue.getOrThrow().toString())
     }
 
 }

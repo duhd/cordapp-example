@@ -41,7 +41,6 @@ private class ExampleClientRPC {
     }
 
     var iError = 0
-    var time: Long = 0
 
     fun main(args: Array<String>) {
         require(args.size == 1) { "Usage: ExampleClientRPC <node address>" }
@@ -70,11 +69,7 @@ private class ExampleClientRPC {
                 val worker = Runnable {
                     if (otherParty != null) {
                         //cashIssue(proxy[p], notary, i)
-                        val forLoop = measureTimeMillis {
-                            generateTransactions(proxy[p], otherParty, i)
-                        }
-                        println("$i...Trans_tx_time: $forLoop")
-                        time += forLoop
+                        generateTransactions(proxy[p], otherParty, i)
                     }
                 }
                 executor.execute(worker)
@@ -88,7 +83,6 @@ private class ExampleClientRPC {
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
         println("ErrorTX: $iError")
-        println("Time: $time")
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
         conn.notifyServerAndClose()

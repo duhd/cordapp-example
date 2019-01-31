@@ -103,7 +103,7 @@ private class ExampleClientRPC {
                 iError.plus(1)
             }
         }
-        println("Trans_tx_time: $forLoopMillisElapsed2")
+        println("$i...Trans_tx_time: $forLoopMillisElapsed2")
         time += forLoopMillisElapsed2
 
     }

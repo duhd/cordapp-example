@@ -128,3 +128,9 @@ task issue(type: JavaExec) {
     main = 'com.example.client.ExampleClientRPCIssueKt'
     args '103.126.156.13:10003'
 }
+
+task iou(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.example.client.ExampleClientRPCIOUKt'
+    args '103.126.156.13:10003'
+}

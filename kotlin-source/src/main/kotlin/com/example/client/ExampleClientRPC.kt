@@ -65,8 +65,9 @@ private class ExampleClientRPC {
             for (i in 0..9999) {
                 val worker = Runnable {
                     if (otherParty != null) {
+                        cashIssue(proxy[p], notary, i)
                         generateTransactions(proxy[p], otherParty, i)
-                        //cashIssue(proxy[p], notary, i)
+
                     }
                 }
                 executor.execute(worker)
@@ -86,8 +87,8 @@ private class ExampleClientRPC {
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
         try {
-           // var tx = proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow()
-            var tx = proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow()
+            var tx = proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow()
+            //var tx = proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow()
 
 
             //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)

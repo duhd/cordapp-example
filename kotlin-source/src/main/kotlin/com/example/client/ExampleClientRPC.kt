@@ -45,7 +45,7 @@ private class ExampleClientRPC {
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
-        val rpcs = 64
+        val rpcs = 128
 
 
         for (i in 0 until rpcs) {

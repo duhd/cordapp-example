@@ -46,7 +46,7 @@ private class ExampleClientRPC {
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
-        val rpcs = 256
+        val rpcs = 350
 
 
         for (i in 0 until rpcs) {
@@ -54,7 +54,7 @@ private class ExampleClientRPC {
             println("RPC Connected...$i")
         }
 
-        val executor: ExecutorService = Executors.newFixedThreadPool(256)
+        val executor: ExecutorService = Executors.newFixedThreadPool(350)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)

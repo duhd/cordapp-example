@@ -70,11 +70,11 @@ private class ExampleClientRPC {
                 val worker = Runnable {
                     if (otherParty != null) {
                         //cashIssue(proxy[p], notary, i)
-                        val forLoopMillisElapsed2 = measureTimeMillis {
+                        val forLoop = measureTimeMillis {
                             generateTransactions(proxy[p], otherParty, i)
                         }
-                        println("$i...Trans_tx_time: $forLoopMillisElapsed2")
-                        time += forLoopMillisElapsed2
+                        println("$i...Trans_tx_time: $forLoop")
+                        time += forLoop
                     }
                 }
                 executor.execute(worker)

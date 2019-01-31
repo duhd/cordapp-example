@@ -37,7 +37,7 @@ private class ExampleClientRPC {
     companion object {
         val logger: Logger = loggerFor<ExampleClientRPC>()
         private fun logState(state: StateAndRef<IOUState>) = logger.info("{}", state.state.data)
-        var iError =0
+        var iError = 0
     }
 
     fun main(args: Array<String>) {
@@ -75,10 +75,11 @@ private class ExampleClientRPC {
             }
 
             executor.shutdown()
-            while (!executor.isTerminated) {
-            }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
+        while (!executor.isTerminated) {
+        }
+
         println("ErrorTX: $iError")
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
@@ -95,7 +96,7 @@ private class ExampleClientRPC {
             //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
             //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
             println("$i..." + tx.toString())
-        } catch (exception: Exception){
+        } catch (exception: Exception) {
             iError.plus(1)
         }
     }

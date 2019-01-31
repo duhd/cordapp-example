@@ -44,7 +44,7 @@ private class ExampleClientRPC {
 
     fun main(args: Array<String>) {
         require(args.size == 1) { "Usage: ExampleClientRPC <node address>" }
-        val nodeAddress = NetworkHostAndPort.parse("51.77.128.45:10003")
+        val nodeAddress = NetworkHostAndPort.parse("51.77.128.44:10003")
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
@@ -58,7 +58,7 @@ private class ExampleClientRPC {
 
         val executor: ExecutorService = Executors.newFixedThreadPool(400)
 
-        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
+        val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
         val notary = proxy.first().notaryIdentities().first()
 

@@ -118,8 +118,13 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     }
 }
 
-task runExampleClientRPCKotlin(type: JavaExec) {
+task pay(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.example.client.ExampleClientRPCKt'
+    args '103.126.156.13:10003'
+}
+task issue(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.example.client.ExampleClientRPCIssueKt'
     args '103.126.156.13:10003'
 }

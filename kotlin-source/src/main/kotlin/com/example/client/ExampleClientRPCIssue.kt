@@ -30,12 +30,12 @@ import java.util.concurrent.Executors
  **/
 
 fun main(args: Array<String>) {
-    ExampleClientRPC().main(args)
+    ExampleClientRPCIssue().main(args)
 }
 
-private class ExampleClientRPC {
+private class ExampleClientRPCIssue {
     companion object {
-        val logger: Logger = loggerFor<ExampleClientRPC>()
+        val logger: Logger = loggerFor<ExampleClientRPCIssue>()
         private fun logState(state: StateAndRef<IOUState>) = logger.info("{}", state.state.data)
 
     }
@@ -48,7 +48,7 @@ private class ExampleClientRPC {
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
-        val rpcs = 256
+        val rpcs = 400
 
 
         for (i in 0 until rpcs) {
@@ -56,7 +56,7 @@ private class ExampleClientRPC {
             println("RPC Connected...$i")
         }
 
-        val executor: ExecutorService = Executors.newFixedThreadPool(256)
+        val executor: ExecutorService = Executors.newFixedThreadPool(400)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
@@ -68,8 +68,8 @@ private class ExampleClientRPC {
             for (i in 0..9999) {
                 val worker = Runnable {
                     if (otherParty != null) {
-                        //cashIssue(proxy[p], notary, i)
-                        generateTransactions(proxy[p], otherParty, i)
+                        cashIssue(proxy[p], notary, i)
+                        //generateTransactions(proxy[p], otherParty, i)
                     }
                 }
                 executor.execute(worker)

@@ -63,8 +63,8 @@ private class ExampleClientRPC {
             for (i in 0..999) {
                 val worker = Runnable {
                     if (otherParty != null) {
-                        //generateTransactions(proxy[p], otherParty, i)
-                        cashIssue(proxy[p], notary, i)
+                        generateTransactions(proxy[p], otherParty, i)
+                        //cashIssue(proxy[p], notary, i)
                     }
                 }
                 executor.execute(worker)

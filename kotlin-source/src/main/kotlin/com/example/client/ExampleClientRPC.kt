@@ -36,6 +36,7 @@ private class ExampleClientRPC {
     companion object {
         val logger: Logger = loggerFor<ExampleClientRPC>()
         private fun logState(state: StateAndRef<IOUState>) = logger.info("{}", state.state.data)
+        val iError =0
     }
 
     fun main(args: Array<String>) {
@@ -46,12 +47,13 @@ private class ExampleClientRPC {
         val proxy = mutableListOf<CordaRPCOps>()
         val rpcs = 32
 
+
         for (i in 0 until rpcs) {
             proxy.add(i, client.start("corda", "not_blockchain").proxy)
             println("RPC Connected...$i")
         }
 
-        val executor = Executors.newFixedThreadPool(256)
+        val executor = Executors.newFixedThreadPool(64)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
@@ -76,16 +78,27 @@ private class ExampleClientRPC {
             }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
+        println("ErrorTX $iError")
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
         conn.notifyServerAndClose()
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
-        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow().toString())
-        //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
-        //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
-        //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
+        try {
+            var tx = proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow()
+            println("$i..." + tx.toString())
+
+            //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
+            //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
+            //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
+        } catch (exception: Exception){
+            incrementErrorCount()
+        }
+    }
+
+    private fun incrementErrorCount() {
+        iError.plus(1)
     }
 
     fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {

@@ -53,7 +53,7 @@ private class ExampleClientRPC {
             println("RPC Connected...$i")
         }
 
-        val executor = Executors.newFixedThreadPool(512)
+        val executor = Executors.newFixedThreadPool(1024)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)

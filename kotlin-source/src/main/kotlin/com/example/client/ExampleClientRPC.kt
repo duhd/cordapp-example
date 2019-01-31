@@ -20,6 +20,7 @@ import net.corda.finance.contracts.asset.Cash
 import net.corda.finance.contracts.getCashBalance
 import net.corda.finance.flows.CashIssueFlow
 import net.corda.finance.flows.CashPaymentFlow
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
@@ -53,7 +54,7 @@ private class ExampleClientRPC {
             println("RPC Connected...$i")
         }
 
-        val executor = Executors.newFixedThreadPool(512)
+        val executor: ExecutorService = Executors.newFixedThreadPool(256)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
@@ -69,7 +70,7 @@ private class ExampleClientRPC {
                         generateTransactions(proxy[p], otherParty, i)
                     }
                 }
-                executor.submit(worker)
+                executor.execute(worker)
                 if (p < rpcs) p.plus(1) else p = 0
             }
 

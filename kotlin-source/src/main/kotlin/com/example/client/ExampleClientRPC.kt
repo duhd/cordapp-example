@@ -69,7 +69,7 @@ private class ExampleClientRPC {
                         generateTransactions(proxy[p], otherParty, i)
                     }
                 }
-                executor.execute(worker)
+                executor.submit(worker)
                 if (p < rpcs) p.plus(1) else p = 0
             }
 

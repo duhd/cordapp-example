@@ -101,6 +101,7 @@ private class ExampleClientRPC {
             println("$i..." + tx.toString())
         } catch (exception: Exception) {
             iError.plus(1)
+            println("$i...------------------------------------------------------------")
         }
 
 

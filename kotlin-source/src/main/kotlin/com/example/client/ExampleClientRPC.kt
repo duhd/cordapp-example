@@ -100,7 +100,7 @@ private class ExampleClientRPC {
             //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
             println("$i..." + tx.toString())
         } catch (exception: Exception) {
-            iError.plus(1)
+            iError += 1
             println("$i...------------------------------------------------------------")
         }
 

@@ -37,8 +37,10 @@ private class ExampleClientRPC {
     companion object {
         val logger: Logger = loggerFor<ExampleClientRPC>()
         private fun logState(state: StateAndRef<IOUState>) = logger.info("{}", state.state.data)
-        var iError = 0
+
     }
+    var iError = 0
+    var time:Long = 0
 
     fun main(args: Array<String>) {
         require(args.size == 1) { "Usage: ExampleClientRPC <node address>" }
@@ -75,11 +77,11 @@ private class ExampleClientRPC {
             }
 
             executor.shutdown()
+
+            while (!executor.isTerminated) {
+            }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
-        while (!executor.isTerminated) {
-        }
-
         println("ErrorTX: $iError")
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
@@ -87,18 +89,23 @@ private class ExampleClientRPC {
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
-        try {
-            var tx = proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow()
-            //var tx = proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow()
+        val forLoopMillisElapsed2 = measureTimeMillis {
+            try {
+                var tx = proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow()
+                //var tx = proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow()
 
 
-            //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
-            //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
-            //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
-            println("$i..." + tx.toString())
-        } catch (exception: Exception) {
-            iError.plus(1)
+                //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
+                //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
+                //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
+                println("$i..." + tx.toString())
+            } catch (exception: Exception) {
+                iError.plus(1)
+            }
         }
+        println("Trans_tx_time: $forLoopMillisElapsed2")
+        time += forLoopMillisElapsed2
+
     }
 
     fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {

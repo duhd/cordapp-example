@@ -45,7 +45,7 @@ allprojects {
             //url 'file://home/dudh/repository'
         }
         maven {
-            url 'file://home/duhd/repository'
+            url 'file://home/corda/repository'
         }
         
         

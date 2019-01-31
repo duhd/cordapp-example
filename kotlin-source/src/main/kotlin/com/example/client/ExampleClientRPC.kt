@@ -70,11 +70,12 @@ private class ExampleClientRPC {
                 executor.execute(worker)
                 if (p < rpcs) p.plus(1) else p = 0
             }
+
+            executor.shutdown()
+            while (!executor.isTerminated) {
+            }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
-        executor.shutdown()
-        while (!executor.isTerminated) {
-        }
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
         conn.notifyServerAndClose()

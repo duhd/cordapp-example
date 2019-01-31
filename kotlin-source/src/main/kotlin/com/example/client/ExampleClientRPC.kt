@@ -40,44 +40,56 @@ private class ExampleClientRPC {
 
     fun main(args: Array<String>) {
         require(args.size == 1) { "Usage: ExampleClientRPC <node address>" }
-        val nodeAddress = NetworkHostAndPort.parse(args[0])
+        val nodeAddress = NetworkHostAndPort.parse("51.77.128.44:10003")
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
-        val proxy: CordaRPCOps = conn.proxy
+        val proxy = mutableListOf<CordaRPCOps>()
+        val rpcs = 32
 
-        val executor = Executors.newFixedThreadPool(1)
+        for (i in 0 until rpcs) {
+            proxy.add(i, client.start("corda", "not_blockchain").proxy)
+            println("RPC Connected...$i")
+        }
 
-        val counterPartyName = CordaX500Name("BankA", "Hanoi", "VN")
-        val otherParty = proxy.wellKnownPartyFromX500Name(counterPartyName)
-        val notary = proxy.notaryIdentities().first()
+        val executor = Executors.newFixedThreadPool(256)
 
-        println("Sum Total: ${proxy.getCashBalance(USD)}")
+        val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
+        val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
+        val notary = proxy.first().notaryIdentities().first()
 
+        println("Sum Total: ${proxy.first().getCashBalance(USD)}")
+        var p: Int = 0
         val forLoopMillisElapsed2 = measureTimeMillis {
             for (i in 0..999) {
-
+                val worker = Runnable {
                     if (otherParty != null) {
-                        generateTransactions(proxy, otherParty, i)
-                        //cashIssue(proxy,notary,i)
+                        //generateTransactions(proxy[p], otherParty, i)
+                        cashIssue(proxy[p], notary, i)
                     }
-
-               }
-
+                }
+                executor.execute(worker)
+                if (p < rpcs) p.plus(1) else p = 0
+            }
         }
         println("forLoopMillisElapsed: $forLoopMillisElapsed2")
-        println("Sum Total: ${proxy.getCashBalance(USD)}")
+        executor.shutdown()
+        while (!executor.isTerminated) {
+        }
+        println("Sum Total: ${proxy.first().getCashBalance(USD)}")
         println("Finished all threads")
         conn.notifyServerAndClose()
     }
 
     fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, i: Int) {
-        //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).returnValue.getOrThrow().toString())
-        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
+        println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(100, USD), otherParty).returnValue.getOrThrow().toString())
+        //println("$i..." + proxy.startFlow(::CashPaymentFlow, Amount(10, USD), otherParty).id)
+        //println("$i..." + proxy.startFlow(ExampleFlow::Initiator, 99, otherParty).returnValue.getOrThrow().toString())
+        //proxy.startFlow(ExampleFlow::Initiator, 99, otherParty)
     }
 
     fun cashIssue(proxy: CordaRPCOps, notary: Party, i: Int) {
         val issueRef = OpaqueBytes.of(0)
-        println("$i..." + proxy.startFlow(::CashIssueFlow, Amount(100, USD), issueRef, notary).returnValue.getOrThrow().toString())
+        println("$i..." + proxy.startFlow(::CashIssueFlow, Amount(1000, USD), issueRef, notary).returnValue.getOrThrow().toString())
     }
 
 }

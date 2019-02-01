@@ -48,7 +48,7 @@ private class ExampleClientRPC {
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
-        val rpcs = 127
+        val rpcs = 31
 
 
         for (i in 0 .. rpcs) {
@@ -74,9 +74,7 @@ private class ExampleClientRPC {
                         if (p < rpcs) p += 1 else p = 0
                     }
                 }
-
                 executor.execute(worker)
-
             }
             executor.shutdown()
             while (!executor.isTerminated) {

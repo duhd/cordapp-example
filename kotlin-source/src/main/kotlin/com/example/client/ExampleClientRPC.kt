@@ -72,9 +72,10 @@ private class ExampleClientRPC {
                     if (otherParty != null) {
                         //cashIssue(proxy[p], notary, i)
                         generateTransactions(proxy[p], otherParty, i = i, p = p)
+                        if (p < rpcs) p += 1 else p = 0
                     }
                 }
-                if (p < rpcs) p += 1 else p = 0
+
                 executor.execute(worker)
 
             }

@@ -51,7 +51,7 @@ private class ExampleClientRPC {
         val rpcs = 128
 
 
-        for (i in 0 until rpcs) {
+        for (i in 0 until rpcs - 1) {
             proxy.add(i, client.start("corda", "not_blockchain").proxy)
             println("RPC Connected...$i")
         }
@@ -73,7 +73,7 @@ private class ExampleClientRPC {
                     }
                 }
                 executor.execute(worker)
-                if (p < rpcs) p+=1 else p = 0
+                if (p < rpcs) p += 1 else p = 0
             }
 
             executor.shutdown()

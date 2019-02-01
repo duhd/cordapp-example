@@ -51,12 +51,12 @@ private class ExampleClientRPC {
         val rpcs = 127
 
 
-        for (i in 0 until rpcs) {
+        for (i in 0 .. rpcs) {
             proxy.add(i, client.start("corda", "not_blockchain").proxy)
             println("RPC Connected...$i")
         }
 
-        val executor: ExecutorService = Executors.newFixedThreadPool(256)
+        val executor: ExecutorService = Executors.newFixedThreadPool(128)
 
         val counterPartyName = CordaX500Name("BankB", "Hanoi", "VN")
         val otherParty = proxy.first().wellKnownPartyFromX500Name(counterPartyName)
@@ -67,11 +67,10 @@ private class ExampleClientRPC {
         var p: Int = 0
         val forLoopMillisElapsed2 = measureTimeMillis {
             for (i in 0..9999) {
-                println("PPPPPPPPPPPPP: $p")
                 val worker = Runnable {
                     if (otherParty != null) {
                         //cashIssue(proxy[p], notary, i)
-                        generateTransactions(proxy[p], otherParty, i = i, p = p)
+                        generateTransactions(proxy[p], otherParty, i, p)
                         if (p < rpcs) p += 1 else p = 0
                     }
                 }

@@ -73,7 +73,7 @@ private class ExampleClientRPCIOU {
                     }
                 }
                 executor.execute(worker)
-                if (p < rpcs) p.plus(1) else p = 0
+                if (p < rpcs) p += 1 else p = 0
             }
 
             executor.shutdown()

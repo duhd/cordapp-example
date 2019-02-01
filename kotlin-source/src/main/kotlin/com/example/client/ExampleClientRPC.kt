@@ -63,9 +63,11 @@ private class ExampleClientRPC {
         val notary = proxy.first().notaryIdentities().first()
 
         println("Sum Total: ${proxy.first().getCashBalance(USD)}")
+
         var p: Int = 0
         val forLoopMillisElapsed2 = measureTimeMillis {
             for (i in 0..9999) {
+                println("PPPPPPPPPPPPP: $p")
                 val worker = Runnable {
                     if (otherParty != null) {
                         //cashIssue(proxy[p], notary, i)
@@ -75,9 +77,7 @@ private class ExampleClientRPC {
                 executor.execute(worker)
                 if (p < rpcs) p += 1 else p = 0
             }
-
             executor.shutdown()
-
             while (!executor.isTerminated) {
             }
         }

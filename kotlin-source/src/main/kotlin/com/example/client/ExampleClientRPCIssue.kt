@@ -48,10 +48,10 @@ private class ExampleClientRPCIssue {
         val client = CordaRPCClient(nodeAddress)
         val conn = client.start("corda", "not_blockchain")
         val proxy = mutableListOf<CordaRPCOps>()
-        val rpcs = 400
+        val rpcs = 399
 
 
-        for (i in 0 until rpcs) {
+        for (i in 0 .. rpcs) {
             proxy.add(i, client.start("corda", "not_blockchain").proxy)
             println("RPC Connected...$i")
         }
@@ -70,10 +70,11 @@ private class ExampleClientRPCIssue {
                     if (otherParty != null) {
                         cashIssue(proxy[p], notary, i)
                         //generateTransactions(proxy[p], otherParty, i)
+                        if (p < rpcs) p += 1 else p = 0
                     }
                 }
                 executor.execute(worker)
-                if (p < rpcs) p += 1 else p = 0
+
             }
 
             executor.shutdown()

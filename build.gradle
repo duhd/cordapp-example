@@ -17,6 +17,7 @@ buildscript {
         classpath "net.corda.plugins:cordapp:$corda_gradle_plugins_version"
         classpath "net.corda.plugins:cordformation:$corda_gradle_plugins_version"
         classpath "net.corda.plugins:quasar-utils:$corda_gradle_plugins_version"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 

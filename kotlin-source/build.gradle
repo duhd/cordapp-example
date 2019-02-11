@@ -2,6 +2,17 @@ apply plugin: 'kotlin'
 apply plugin: 'net.corda.plugins.cordapp'
 apply plugin: 'net.corda.plugins.cordformation'
 apply plugin: 'net.corda.plugins.quasar-utils'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': '1.0',
+                'Main-Class': 'com.example.client.ClientRPC'
+    }
+    baseName = 'vnpay-cordapp-example'
+}
+
 
 jar.baseName = "cordapp-example"
 
@@ -31,7 +42,7 @@ configurations {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testCompile "junit:junit:$junit_version"
     compile "org.jolokia:jolokia-core:1.6.0"

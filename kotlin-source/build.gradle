@@ -12,8 +12,8 @@ shadowJar {
                 'Main-Class': 'com.example.client.ClientRPCKt'
     }
     baseName = 'vnpay-cordapp-example'
+    zip64 = true
 }
-
 
 jar.baseName = "cordapp-example"
 

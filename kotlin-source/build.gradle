@@ -46,6 +46,10 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testCompile "junit:junit:$junit_version"
     compile "org.jolokia:jolokia-core:1.6.0"
+    // https://mvnrepository.com/artifact/org.apache.jmeter/ApacheJMeter_java
+    //compile group: 'org.apache.jmeter', name: 'ApacheJMeter_java', version: '5.0'
+    compile 'org.apache.jmeter:ApacheJMeter_java:5.0'
+
 
     // Corda integration dependencies
     cordaCompile "$corda_release_group:corda-core:$corda_release_version"
@@ -144,4 +148,12 @@ task iou(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.example.client.ExampleClientRPCIOUKt'
     args '103.126.156.13:10003'
+}
+
+
+task copySample(type:Copy,dependsOn:[build]) {
+    copy {
+        from project.buildDir.getPath()+'/libs/jmeter-sampler-1.0-SNAPSHOT.jar'
+        into 'pathtoyourjmeterinstallation/apache-jmeter-2.13/lib/ext/'
+    }
 }

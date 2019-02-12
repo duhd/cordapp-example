@@ -41,8 +41,10 @@ class ClientJmeter : AbstractJavaSamplerClient(), Serializable {
         try {
             if (method.equals("pay")) {
                 sampleResult.responseMessage = client.clientPay(receiver, amount)
-            }else{
+            } else if (method.equals("issue")) {
                 sampleResult.responseMessage = client.clientIssue(amount)
+            } else {
+                sampleResult.responseMessage = client.clientIssueAndPay(receiver, amount)
             }
             sampleResult.sampleEnd()
             sampleResult.isSuccessful = java.lang.Boolean.TRUE

@@ -11,6 +11,7 @@ import net.corda.core.identity.Party
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.utilities.OpaqueBytes
 import net.corda.finance.USD
+import net.corda.finance.flows.CashIssueAndPaymentFlow
 import net.corda.finance.flows.CashIssueFlow
 import net.corda.finance.flows.CashPaymentFlow
 
@@ -34,16 +35,31 @@ class ClientRPC {
     fun clientPay(receiver: String, amount: Long): String {
         val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
         val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
-        return generateTransactions(proxy!!, otherParty!!, amount)
+        return cashPayment(proxy!!, otherParty!!, amount)
 
     }
+
+    fun clientIssueAndPay(receiver: String, amount: Long): String {
+        val notary = proxy!!.notaryIdentities().first()
+        val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
+        val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
+        return cashIssueAndPayment(proxy!!, otherParty!!, notary, amount)
+    }
+
     fun clientIssue(amount: Long): String {
         val notary = proxy!!.notaryIdentities().first()
         return cashIssue(proxy!!, notary, amount)
-
     }
-    fun generateTransactions(proxy: CordaRPCOps, otherParty: Party, amount: Long): String {
+
+    fun cashPayment(proxy: CordaRPCOps, otherParty: Party, amount: Long): String {
         var tx = proxy.startFlow(::CashPaymentFlow, Amount(amount, USD), otherParty).returnValue.getOrThrow()
+        return tx.toString()
+    }
+
+    fun cashIssueAndPayment(proxy: CordaRPCOps, otherParty: Party, notary: Party, amount: Long): String {
+        val issueRef = OpaqueBytes.of(0)
+        val request: CashIssueAndPaymentFlow.IssueAndPaymentRequest = CashIssueAndPaymentFlow.IssueAndPaymentRequest(Amount(amount, USD), issueRef, otherParty, notary, false)
+        var tx = proxy.startFlow(::CashIssueAndPaymentFlow, request).returnValue.getOrThrow()
         return tx.toString()
     }
 

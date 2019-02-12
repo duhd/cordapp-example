@@ -43,7 +43,6 @@ allprojects {
         // }
         maven {
             url 'file://E:/Users/Hoang Dinh Du/OneDrive/CordaCode/corda-enterprise/repository'
-            //url 'file://home/dudh/repository'
         }
         maven {
             url 'file://home/corda/repository'

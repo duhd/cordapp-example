@@ -40,7 +40,7 @@ class ClientRPC {
         val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
         val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
         val random = Random()
-        return cashPayment(proxy!!, otherParty!!, random.nextInt(9999).toLong())
+        return cashPayment(proxy!!, otherParty!!, random.nextInt(9999).toLong() + 1)
 
     }
 
@@ -49,13 +49,13 @@ class ClientRPC {
         val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
         val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
         val random = Random()
-        return cashIssueAndPayment(proxy!!, otherParty!!, notary, random.nextInt(1000).toLong())
+        return cashIssueAndPayment(proxy!!, otherParty!!, notary, random.nextInt(1000).toLong() + 1)
     }
 
     fun clientIssue(amount: Long): String {
         val notary = proxy!!.notaryIdentities().first()
         val random = Random()
-        val tx = cashIssue(proxy!!, notary, random.nextInt(10000).toLong())
+        val tx = cashIssue(proxy!!, notary, random.nextInt(10000).toLong() + 1)
         logger.debug(tx)
         return tx
     }

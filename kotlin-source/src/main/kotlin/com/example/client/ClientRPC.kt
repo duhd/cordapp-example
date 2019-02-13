@@ -14,6 +14,7 @@ import net.corda.finance.USD
 import net.corda.finance.flows.CashIssueAndPaymentFlow
 import net.corda.finance.flows.CashIssueFlow
 import net.corda.finance.flows.CashPaymentFlow
+import java.util.*
 
 class ClientRPC {
     companion object {
@@ -35,7 +36,8 @@ class ClientRPC {
     fun clientPay(receiver: String, amount: Long): String {
         val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
         val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
-        return cashPayment(proxy!!, otherParty!!, amount)
+        val random = Random()
+        return cashPayment(proxy!!, otherParty!!, random.nextLong())
 
     }
 
@@ -43,12 +45,14 @@ class ClientRPC {
         val notary = proxy!!.notaryIdentities().first()
         val counterPartyName = CordaX500Name(receiver, "Hanoi", "VN")
         val otherParty = proxy!!.wellKnownPartyFromX500Name(counterPartyName)
-        return cashIssueAndPayment(proxy!!, otherParty!!, notary, amount)
+        val random = Random()
+        return cashIssueAndPayment(proxy!!, otherParty!!, notary, random.nextLong())
     }
 
     fun clientIssue(amount: Long): String {
         val notary = proxy!!.notaryIdentities().first()
-        return cashIssue(proxy!!, notary, amount)
+        val random = Random()
+        return cashIssue(proxy!!, notary, random.nextLong())
     }
 
     fun cashPayment(proxy: CordaRPCOps, otherParty: Party, amount: Long): String {

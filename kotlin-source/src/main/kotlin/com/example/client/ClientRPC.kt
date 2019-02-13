@@ -10,16 +10,19 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.core.identity.Party
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.utilities.OpaqueBytes
+import net.corda.core.utilities.loggerFor
 import net.corda.finance.USD
 import net.corda.finance.flows.CashIssueAndPaymentFlow
 import net.corda.finance.flows.CashIssueFlow
 import net.corda.finance.flows.CashPaymentFlow
+import org.slf4j.Logger
 import java.util.*
 
 class ClientRPC {
     companion object {
         private var proxy: CordaRPCOps? = null
         private var conn: CordaRPCConnection? = null
+        val logger: Logger = loggerFor<ClientRPC>()
     }
 
     fun connect(node: String, userRPC: String, passRPC: String) {
@@ -52,7 +55,9 @@ class ClientRPC {
     fun clientIssue(amount: Long): String {
         val notary = proxy!!.notaryIdentities().first()
         val random = Random()
-        return cashIssue(proxy!!, notary, random.nextInt(10000).toLong())
+        val tx = cashIssue(proxy!!, notary, random.nextInt(10000).toLong())
+        logger.debug(tx)
+        return tx
     }
 
     fun cashPayment(proxy: CordaRPCOps, otherParty: Party, amount: Long): String {
